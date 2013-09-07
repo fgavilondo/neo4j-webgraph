@@ -18,6 +18,7 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.UniqueFactory;
+import org.neo4j.test.TestGraphDatabaseFactory;
 import org.neo4japps.webgraph.util.ListChunker;
 import org.neo4japps.webgraph.util.UrlUtil;
 
@@ -83,8 +84,17 @@ public final class TransactionalGraphImporter extends AbstractObservableGraphImp
 
     private final int transactionSize;
 
+    /**
+     * For unit testing
+     */
+    public static TransactionalGraphImporter createImpermanentInstance(String rootUrl, long startTimeInMillis,
+        int importProgressReportFrequency, int transactionSize) {
+        return new TransactionalGraphImporter(new TestGraphDatabaseFactory().newImpermanentDatabaseBuilder()
+            .newGraphDatabase(), rootUrl, startTimeInMillis, importProgressReportFrequency, transactionSize);
+    }
+
     public TransactionalGraphImporter(GraphDatabaseService graphDb, String rootUrl, long startTimeInMillis,
-            int importProgressReportFrequency, int transactionSize) {
+        int importProgressReportFrequency, int transactionSize) {
 
         super(rootUrl, startTimeInMillis, importProgressReportFrequency);
 
@@ -125,8 +135,7 @@ public final class TransactionalGraphImporter extends AbstractObservableGraphImp
 
     @Override
     public Node addPage(String url, String content) {
-        if (isStopped.get())
-            return null;
+        if (isStopped.get()) return null;
 
         Node page = addPageWithoutBroadcasting(url, content, true);
 
@@ -137,8 +146,7 @@ public final class TransactionalGraphImporter extends AbstractObservableGraphImp
     }
 
     Node addPageWithoutBroadcasting(String url, String content, boolean useTransaction) {
-        if (isStopped.get())
-            return null;
+        if (isStopped.get()) return null;
 
         String domain = null;
         String type = null;
@@ -163,7 +171,7 @@ public final class TransactionalGraphImporter extends AbstractObservableGraphImp
     }
 
     private Node addOrModifyPageInTransaction(final String url, final String domain, final String type,
-            final String content) {
+        final String content) {
         try {
             Callable<Object> task = new Callable<Object>() {
                 @Override
@@ -252,8 +260,7 @@ public final class TransactionalGraphImporter extends AbstractObservableGraphImp
      */
     @Override
     public List<Relationship> addLinks(Node fromPage, List<String> toUrls) {
-        if (isStopped.get())
-            return new ArrayList<Relationship>();
+        if (isStopped.get()) return new ArrayList<Relationship>();
 
         NodesAndRelationshipsTuple tuple = doAddLinksInTransaction(fromPage, toUrls);
 
