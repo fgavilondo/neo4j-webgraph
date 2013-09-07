@@ -2,24 +2,19 @@ package org.neo4japps.webgraph.customhandlers;
 
 import java.util.Properties;
 
-import junit.framework.TestCase;
-
 import org.neo4j.graphdb.Node;
-import org.neo4j.test.TestGraphDatabaseFactory;
 import org.neo4japps.webgraph.importer.AbstractObservableGraphImporter;
 import org.neo4japps.webgraph.importer.ApplicationConfiguration;
 import org.neo4japps.webgraph.importer.PageNode;
-import org.neo4japps.webgraph.importer.TransactionalGraphImporter;
 
-public class TwitterEventHandlerTest extends TestCase {
+public class TwitterEventHandlerTest extends EventHandlerTest {
 
     private AbstractObservableGraphImporter graphImporter;
     private TwitterEventHandler handler;
 
     @Override
     protected void setUp() throws Exception {
-        graphImporter = new TransactionalGraphImporter(new TestGraphDatabaseFactory().newImpermanentDatabaseBuilder()
-                .newGraphDatabase(), "http://homepage.com/", System.currentTimeMillis(), 100, 500);
+        graphImporter = createImpermanentGraphImporter("http://homepage.com/", System.currentTimeMillis(), 100, 500);
         handler = new TwitterEventHandler();
         handler.configure(new ApplicationConfiguration(new String[] { "-t" }, new Properties()));
         graphImporter.addObserver(handler);

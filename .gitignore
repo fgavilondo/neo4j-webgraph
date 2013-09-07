@@ -7,8 +7,11 @@
 # Ignore build output
 /target
 
-# Ignore all generated graphs
+# Ignore generated graph
 /graph.db
+
+# Ignore temporary crawl data
+/crawl-data
 
 #Ignore Eclipse IDE files
 /.settings

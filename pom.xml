@@ -4,9 +4,9 @@
 
     <groupId>org.neo4japps</groupId>
     <artifactId>neo4j-webgraph</artifactId>
-    <version>1.0</version>
+    <version>1.8.3.0</version>
     
-    <name>Neo4J website graph importer</name>
+    <name>Neo4J graph importer for websites</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
