@@ -37,6 +37,14 @@
             <scope>compile</scope>
         </dependency>
         
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-kernel</artifactId>
+            <version>${neo4j.version}</version>
+            <type>test-jar</type>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- Web crawler lib -->
         <dependency>
             <groupId>edu.uci.ics</groupId>
@@ -92,14 +100,6 @@
 
         <!-- Testing libs -->
         
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-kernel</artifactId>
-            <version>${neo4j.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
