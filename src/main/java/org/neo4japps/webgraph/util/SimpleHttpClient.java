@@ -80,8 +80,8 @@ public class SimpleHttpClient {
 
         if (proxyUsername != null) {
             CredentialsProvider credsProvider = new BasicCredentialsProvider();
-            credsProvider.setCredentials(new AuthScope(proxyHost, proxyPort), new UsernamePasswordCredentials(
-                    proxyUsername, proxyPassword));
+            credsProvider.setCredentials(new AuthScope(proxyHost, proxyPort),
+                    new UsernamePasswordCredentials(proxyUsername, proxyPassword));
             defaultClient.setCredentialsProvider(credsProvider);
             logger.info("Configured proxy user " + proxyUsername);
         }

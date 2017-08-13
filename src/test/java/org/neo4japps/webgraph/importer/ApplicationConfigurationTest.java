@@ -80,8 +80,8 @@ public class ApplicationConfigurationTest extends TestCase {
         assertTrue(appConfig.isIncludeHttpsPages());
         assertTrue(appConfig.isUseTransactions());
 
-        appConfig = new ApplicationConfiguration(new String[] { "-r", "false", "-b", "false", "-s", "false", "-t",
-                "false" }, new Properties());
+        appConfig = new ApplicationConfiguration(
+                new String[] { "-r", "false", "-b", "false", "-s", "false", "-t", "false" }, new Properties());
         assertFalse(appConfig.isResumableImport());
         assertFalse(appConfig.isIncludeBinaryContentInCrawling());
         assertFalse(appConfig.isIncludeHttpsPages());
@@ -213,8 +213,8 @@ public class ApplicationConfigurationTest extends TestCase {
     public void testCrawlableUrlDeterminationGivenStandardConfiguration() throws Exception {
         ApplicationConfiguration appConfig = new ApplicationConfiguration(new String[] {});
         assertFalse(appConfig.isCrawlableUrl("http://login.live.com/"));
-        assertFalse(appConfig
-                .isCrawlableUrl("http://login.live.com/login.srf?cb=area%3Dninemsn.com.au&ct=1203904351&id=76307&lc=1033&rpsnv=10&rver=4.5.2125.0&wa=wsignin1.0&wp=LBI&wreply=http%3A%2F%2Fninemsn.com.au"));
+        assertFalse(appConfig.isCrawlableUrl(
+                "http://login.live.com/login.srf?cb=area%3Dninemsn.com.au&ct=1203904351&id=76307&lc=1033&rpsnv=10&rver=4.5.2125.0&wa=wsignin1.0&wp=LBI&wreply=http%3A%2F%2Fninemsn.com.au"));
     }
 
     public void testThatExceptionIsThrownWhenPropertiesAreMissing() throws Exception {

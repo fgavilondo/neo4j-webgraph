@@ -1,9 +1,9 @@
 package org.neo4japps.webgraph.importer;
 
-import junit.framework.TestCase;
-
 import org.neo4j.graphdb.Node;
 import org.neo4japps.webgraph.testutils.MockNodeFactory;
+
+import junit.framework.TestCase;
 
 public class PageNodeTest extends TestCase {
 

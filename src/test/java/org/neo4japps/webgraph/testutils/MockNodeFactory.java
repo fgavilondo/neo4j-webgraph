@@ -39,8 +39,8 @@ public class MockNodeFactory {
             @Override
             public Object answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
-                return propsByNode.get(mockNode).get(args[0]) == null ? args[1] : propsByNode.get(mockNode)
-                        .get(args[0]);
+                return propsByNode.get(mockNode).get(args[0]) == null ? args[1]
+                        : propsByNode.get(mockNode).get(args[0]);
             }
         });
 

@@ -177,7 +177,8 @@ public abstract class GraphObserver {
         }
     }
 
-    protected Object updateSinglePageInTransaction(final Node page, final GraphImporter graphImporter) throws Exception {
+    protected Object updateSinglePageInTransaction(final Node page, final GraphImporter graphImporter)
+            throws Exception {
         decrementNumberOfPageNodesPendingProcessing();
 
         if (shouldIgnore(page, graphImporter)) {

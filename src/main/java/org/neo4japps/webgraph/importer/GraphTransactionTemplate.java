@@ -86,8 +86,8 @@ public class GraphTransactionTemplate {
                     sleep(sleepMillis);
                 } else {
                     failedTransactions.incrementAndGet();
-                    logger.error(ownerString() + "Too many deadlocks executing task " + task.toString()
-                            + " - Giving up.");
+                    logger.error(
+                            ownerString() + "Too many deadlocks executing task " + task.toString() + " - Giving up.");
                 }
             }
         }

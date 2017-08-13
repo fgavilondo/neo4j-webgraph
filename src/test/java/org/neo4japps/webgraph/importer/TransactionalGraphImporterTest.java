@@ -30,8 +30,9 @@ public class TransactionalGraphImporterTest extends GraphImporterTestBase {
     }
 
     private void createGraphImporter(int transactionSize, boolean eventHandlersExecuteTheirOwnTransactions) {
-        importer = new TransactionalGraphImporter(new TestGraphDatabaseFactory().newImpermanentDatabaseBuilder()
-                .newGraphDatabase(), ROOT_URL, System.currentTimeMillis(), 100, transactionSize);
+        importer = new TransactionalGraphImporter(
+                new TestGraphDatabaseFactory().newImpermanentDatabaseBuilder().newGraphDatabase(), ROOT_URL,
+                System.currentTimeMillis(), 100, transactionSize);
     }
 
     private Node importRootPage() {

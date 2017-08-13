@@ -231,7 +231,7 @@ public class PageNode {
         if (page == null)
             return "null";
 
-        return "id: " + page.getId() + ", " + URL_KEY + ": " + getUrl(page) + ", " + DOMAIN_KEY + ": "
-                + getDomain(page) + ", " + TYPE_KEY + ": " + getType(page);
+        return "id: " + page.getId() + ", " + URL_KEY + ": " + getUrl(page) + ", " + DOMAIN_KEY + ": " + getDomain(page)
+                + ", " + TYPE_KEY + ": " + getType(page);
     }
 }

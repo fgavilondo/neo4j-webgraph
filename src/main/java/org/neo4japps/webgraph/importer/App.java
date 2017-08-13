@@ -297,8 +297,8 @@ public class App {
         logger.info("Start crawling");
 
         /*
-         * Start the crawl. This is a blocking operation, meaning that your code
-         * will reach the line after this only when crawling is finished.
+         * Start the crawl. This is a blocking operation, meaning that your code will reach the line after this only
+         * when crawling is finished.
          */
         crawlController.start(HtmlOnlyCrawler.class, appConfig.getNumberOfCrawlers());
 
@@ -318,23 +318,19 @@ public class App {
         crawlConfig.setPolitenessDelay(appConfig.getPolitenessDelay());
 
         /*
-         * You can set the maximum crawl depth here. The default value is -1 for
-         * unlimited depth
+         * You can set the maximum crawl depth here. The default value is -1 for unlimited depth
          */
         crawlConfig.setMaxDepthOfCrawling(appConfig.getMaxDepthOfCrawling());
 
         /*
-         * You can set the maximum number of pages to crawl. The default value
-         * is -1 for unlimited number of pages.
+         * You can set the maximum number of pages to crawl. The default value is -1 for unlimited number of pages.
          */
         crawlConfig.setMaxPagesToFetch(appConfig.getMaxPagesToFetch());
 
         /*
-         * This config parameter can be used to set your crawl to be resumable
-         * (meaning that you can resume the crawl from a previously
-         * interrupted/crashed crawl). Note: if you enable resuming feature and
-         * want to start a fresh crawl, you need to delete the contents of
-         * rootFolder manually.
+         * This config parameter can be used to set your crawl to be resumable (meaning that you can resume the crawl
+         * from a previously interrupted/crashed crawl). Note: if you enable resuming feature and want to start a fresh
+         * crawl, you need to delete the contents of rootFolder manually.
          */
         crawlConfig.setResumableCrawling(appConfig.isResumableImport());
 
@@ -356,9 +352,8 @@ public class App {
     }
 
     /**
-     * For each crawl, we need to add some seed URLs. These are the first URLs
-     * that are fetched and then the crawler starts following links which are
-     * found in these pages.
+     * For each crawl, we need to add some seed URLs. These are the first URLs that are fetched and then the crawler
+     * starts following links which are found in these pages.
      */
     private void addSeedUrls(CrawlController crawlController) {
         String[] seedUrls = appConfig.getSeedUrls();
@@ -450,7 +445,8 @@ public class App {
             logger.info(observerClassName + " notified of: " + observer.getNumberOfNotifiedPageNodes() + " page nodes");
             logger.info(observerClassName + " updated: " + observer.getNumberOfUpdatedPageNodes() + " page nodes");
             logger.info(observerClassName + " ignored: " + observer.getNumberOfIgnoredPageNodes() + " page nodes");
-            logger.info(observerClassName + " failed to update: " + observer.getNumberOfFailedUpdates() + " page nodes");
+            logger.info(
+                    observerClassName + " failed to update: " + observer.getNumberOfFailedUpdates() + " page nodes");
 
             if (observer instanceof CachingObserver && ((CachingObserver) observer).isCachingEnabled()) {
                 logger.info(observerClassName + " cache hits: " + ((CachingObserver) observer).getCacheHits());

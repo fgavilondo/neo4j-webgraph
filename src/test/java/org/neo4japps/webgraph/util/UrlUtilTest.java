@@ -13,7 +13,7 @@ public class UrlUtilTest extends TestCase {
 
         assertEquals("subdomain.mydomain.com", UrlUtil.extractHost("http://subdomain.mydomain.com"));
         assertEquals("subdomain.mydomain.com", UrlUtil.extractHost("http://www.subdomain.mydomain.com"));
-        
+
         assertEquals("subdomain.mydomain.com",
                 UrlUtil.extractHost("http://subdomain.mydomain.com\\img\\someimage.jpg/"));
         assertEquals("subdomain.mydomain.com",
@@ -26,10 +26,8 @@ public class UrlUtilTest extends TestCase {
 
         assertEquals("subdomain", UrlUtil.extractDomain(new URL("http://subdomain.mydomain.com")));
         assertEquals("subdomain", UrlUtil.extractDomain(new URL("http://www.subdomain.mydomain.com")));
-        assertEquals("subdomain",
-                UrlUtil.extractDomain(new URL("http://subdomain.mydomain.com\\img\\someimage.jpg/")));
-        assertEquals("subdomain",
-                UrlUtil.extractDomain(new URL("http://subdomain.mydomain.com\\img\\someimage.jpg")));
+        assertEquals("subdomain", UrlUtil.extractDomain(new URL("http://subdomain.mydomain.com\\img\\someimage.jpg/")));
+        assertEquals("subdomain", UrlUtil.extractDomain(new URL("http://subdomain.mydomain.com\\img\\someimage.jpg")));
     }
 
     public void testPageTypeDeterminedCorrectlyFromUrl() throws MalformedURLException {
@@ -41,7 +39,7 @@ public class UrlUtilTest extends TestCase {
         assertFalse(UrlUtil.isHomePage(new URL("http://mydomain.com/bla")));
         assertFalse(UrlUtil.isHomePage(new URL("http://mydomain.com/?bla=1")));
         assertFalse(UrlUtil.isHomePage(new URL("http://mydomain.com/bla#ref1")));
-        
+
         assertFalse(UrlUtil.isHomePage(new URL("http://subdomain.mydomain.com\\img\\someimage.jpg/")));
         assertFalse(UrlUtil.isHomePage(new URL("http://subdomain.mydomain.com\\img\\someimage.jpg")));
     }

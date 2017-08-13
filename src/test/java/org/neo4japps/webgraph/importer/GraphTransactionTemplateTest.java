@@ -2,10 +2,10 @@ package org.neo4japps.webgraph.importer;
 
 import java.util.concurrent.Callable;
 
-import junit.framework.TestCase;
-
 import org.neo4j.kernel.DeadlockDetectedException;
 import org.neo4j.test.TestGraphDatabaseFactory;
+
+import junit.framework.TestCase;
 
 public class GraphTransactionTemplateTest extends TestCase {
     static class CallableThatAlwaysDeadlocks implements Callable<Object> {
@@ -42,8 +42,9 @@ public class GraphTransactionTemplateTest extends TestCase {
 
     @Override
     protected void setUp() {
-        graphImporter = new TransactionalGraphImporter(new TestGraphDatabaseFactory().newImpermanentDatabaseBuilder()
-                .newGraphDatabase(), "http://homepage.com/", System.currentTimeMillis(), 100, 500);
+        graphImporter = new TransactionalGraphImporter(
+                new TestGraphDatabaseFactory().newImpermanentDatabaseBuilder().newGraphDatabase(),
+                "http://homepage.com/", System.currentTimeMillis(), 100, 500);
     }
 
     @Override

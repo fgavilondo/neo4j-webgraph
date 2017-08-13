@@ -2,9 +2,9 @@ package org.neo4japps.webgraph.importer;
 
 import java.util.Properties;
 
-import junit.framework.TestCase;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
+import junit.framework.TestCase;
 
 public class HtmlOnlyCrawlerTest extends TestCase {
     private HtmlOnlyCrawler crawler;

@@ -14,10 +14,10 @@ import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.Set;
 
+import org.neo4japps.webgraph.util.UrlUtil;
+
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-
-import org.neo4japps.webgraph.util.UrlUtil;
 
 public class ApplicationConfiguration {
 
@@ -34,11 +34,8 @@ public class ApplicationConfiguration {
 
     private static final OptionParser OPTIONS_PARSER = new OptionParser() {
         {
-            accepts("r")
-                    .withOptionalArg()
-                    .ofType(Boolean.class)
-                    .describedAs(
-                            "resumable import ((defaults to false , i.e start afresh and discard all previously imported data)");
+            accepts("r").withOptionalArg().ofType(Boolean.class).describedAs(
+                    "resumable import ((defaults to false , i.e start afresh and discard all previously imported data)");
             accepts("b").withOptionalArg().ofType(Boolean.class)
                     .describedAs("include binary content in crawling (defaults to false)");
             accepts("s").withOptionalArg().ofType(Boolean.class)
@@ -120,7 +117,8 @@ public class ApplicationConfiguration {
 
         maxPagesToFetch = (Integer) cliOptions.valueOf("f");
         if (maxPagesToFetch < 1 && maxPagesToFetch != -1) {
-            throw new IllegalArgumentException("Value for option 'f' must be >= 1, or -1 for unlimited number of pages");
+            throw new IllegalArgumentException(
+                    "Value for option 'f' must be >= 1, or -1 for unlimited number of pages");
         }
 
         maxDepthOfCrawling = (Integer) cliOptions.valueOf("d");

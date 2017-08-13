@@ -65,13 +65,14 @@ public final class FailedUrls {
         }
     }
 
-    private void reportErrorType(Logger logger, int maxNumberOfUrlsToDisplay, String errorType, Map<String, String> map) {
+    private void reportErrorType(Logger logger, int maxNumberOfUrlsToDisplay, String errorType,
+            Map<String, String> map) {
         if (map.isEmpty()) {
             return;
         }
 
         logger.info(errorType + ": " + map.size() + " URLs");
-        
+
         if (map.size() <= maxNumberOfUrlsToDisplay) {
             for (Entry<String, String> entry : map.entrySet()) {
                 logger.info("  " + entry.getKey() + ": " + entry.getValue());

@@ -37,8 +37,8 @@ public final class UrlUtil {
     }
 
     /**
-     * E.g. for http://mydomain.com this method returns "mydomain", for http://www.mydomain.com this method also
-     * returns "mydomain"
+     * E.g. for http://mydomain.com this method returns "mydomain", for http://www.mydomain.com this method also returns
+     * "mydomain"
      * 
      * @param url
      *            the URL to analyze

@@ -2,13 +2,13 @@ package org.neo4japps.webgraph.customhandlers;
 
 import java.util.Properties;
 
-import junit.framework.TestCase;
-
 import org.neo4j.graphdb.Node;
 import org.neo4japps.webgraph.importer.AbstractObservableGraphImporter;
 import org.neo4japps.webgraph.importer.ApplicationConfiguration;
 import org.neo4japps.webgraph.importer.PageNode;
 import org.neo4japps.webgraph.importer.TransactionalGraphImporter;
+
+import junit.framework.TestCase;
 
 public class FacebookAndTwitterEventHandlerTest extends TestCase {
 
@@ -18,7 +18,7 @@ public class FacebookAndTwitterEventHandlerTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         graphImporter = TransactionalGraphImporter.createImpermanentInstance("http://homepage.com/",
-            System.currentTimeMillis(), 100, 500);
+                System.currentTimeMillis(), 100, 500);
         handler = new FacebookAndTwitterEventHandler();
         handler.configure(new ApplicationConfiguration(new String[] { "-t" }, new Properties()));
         graphImporter.addObserver(handler);

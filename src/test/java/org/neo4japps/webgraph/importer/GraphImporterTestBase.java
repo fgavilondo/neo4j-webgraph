@@ -125,8 +125,8 @@ public abstract class GraphImporterTestBase {
 
         Node rootPage = getImporter().getRootPage();
 
-        Relationship link = getImporter().addLinks(rootPage,
-                Collections.singletonList("http://sub3.homepage.com/linked1")).get(0);
+        Relationship link = getImporter()
+                .addLinks(rootPage, Collections.singletonList("http://sub3.homepage.com/linked1")).get(0);
         assertNotNull(link);
         assertEquals(1 + initialNumberOfPageNodes, getImporter().getNumberOfPageNodes());
         assertEquals(rootPage, link.getStartNode());

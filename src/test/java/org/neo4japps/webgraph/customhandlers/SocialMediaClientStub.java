@@ -1,6 +1,5 @@
 package org.neo4japps.webgraph.customhandlers;
 
-
 class SocialMediaClientStub implements SocialMediaClient {
     private final int count;
 

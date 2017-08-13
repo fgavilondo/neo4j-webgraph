@@ -6,7 +6,10 @@ package org.neo4japps.webgraph.importer;
  */
 public interface CachingObserver {
     boolean isCachingEnabled();
+
     long getCacheHits();
+
     long getCacheMisses();
+
     long getCacheUpdates();
 }
