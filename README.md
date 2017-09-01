@@ -6,7 +6,7 @@ You configure the application by placing a config.properties file at the root of
 
 The application takes some command line parameters. Pass the -h argument to see all possible command line options, e.g.:
 
-  java -cp release/neo4j-webgraph-1.8.3.0-jar-with-dependencies.jar org.neo4japps.webgraph.importer.Main -h
+  java -cp target/neo4j-webgraph-1.8.3.0-jar-with-dependencies.jar org.neo4japps.webgraph.importer.Main -h
 
 Note that, during the import process, you can annotate your Neo4j graph nodes with additional properties by providing custom event handlers that get invoked when a node gets created.
 
