@@ -4,7 +4,7 @@ Neo4j-Webgraph is a Java application to crawl the configured websites and import
 
 You configure the application by placing a config.properties file at the root of the classpath (a template config file is provided with the source code in the src/main/resources directory)
 
-The application takes some command line parameters. ass -h argument to see all possible command line options, e.g.:
+The application takes some command line parameters. Pass the -h argument to see all possible command line options, e.g.:
 
   java -cp release/neo4j-webgraph-1.8.3.0-jar-with-dependencies.jar org.neo4japps.webgraph.importer.Main -h
 
