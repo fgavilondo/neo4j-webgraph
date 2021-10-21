@@ -11,9 +11,8 @@ public class FacebookAndTwitterEventHandler extends SocialMediaEventHandler {
 
     /**
      * For unit test mocking
-     * 
-     * @param facebookClient
-     *            the facebookClient to set
+     *
+     * @param facebookClient the facebookClient to set
      */
     void setFacebookClient(SocialMediaClient facebookClient) {
         this.facebookClient = facebookClient;
@@ -21,9 +20,8 @@ public class FacebookAndTwitterEventHandler extends SocialMediaEventHandler {
 
     /**
      * For unit test mocking
-     * 
-     * @param twitterClient
-     *            the twitterClient to set
+     *
+     * @param twitterClient the twitterClient to set
      */
     void setTwitterClient(SocialMediaClient twitterClient) {
         this.twitterClient = twitterClient;

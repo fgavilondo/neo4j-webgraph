@@ -1,19 +1,19 @@
 package org.neo4japps.webgraph.importer;
 
+import org.neo4j.graphdb.Node;
+
 import java.util.Collections;
 import java.util.EventObject;
 import java.util.List;
 
-import org.neo4j.graphdb.Node;
-
 /**
- * Event that gets broadcasted during the graph import process when a number of page node are created or modified.
+ * Event that gets broadcast during the graph import process when a number of page node are created or modified.
  */
 public final class PageNodesModificationEvent extends EventObject {
 
     private static final long serialVersionUID = 1L;
 
-    private final List<Node> pages;
+    private final transient List<Node> pages;
 
     public PageNodesModificationEvent(Object source, List<Node> pages) {
         super(source);

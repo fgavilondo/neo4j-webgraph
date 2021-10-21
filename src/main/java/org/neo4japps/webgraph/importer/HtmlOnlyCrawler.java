@@ -1,19 +1,19 @@
 package org.neo4japps.webgraph.importer;
 
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Pattern;
-
-import org.apache.http.HttpStatus;
-import org.neo4j.graphdb.Node;
-import org.neo4japps.webgraph.util.UrlUtil;
-
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
+import org.apache.http.HttpStatus;
+import org.neo4j.graphdb.Node;
+import org.neo4japps.webgraph.util.UrlUtil;
+
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 
 /**
  * WebCrawler class in the Runnable class that is executed by each crawler thread.
@@ -30,7 +30,7 @@ public class HtmlOnlyCrawler extends WebCrawler {
 
     /**
      * For unit tests. Returns the number of pages visited by all instances of this class.
-     * 
+     *
      * @return number of pages.
      */
     static int getGlobalPageCount() {
@@ -46,9 +46,8 @@ public class HtmlOnlyCrawler extends WebCrawler {
 
     /**
      * For unit tests. Allows us to inject the configuration.
-     * 
-     * @param config
-     *            the config
+     *
+     * @param config the config
      */
     void setAppConfig(ApplicationConfiguration config) {
         this.appConfig = config;
@@ -56,9 +55,8 @@ public class HtmlOnlyCrawler extends WebCrawler {
 
     /**
      * For unit tests. Allows us to inject the importer.
-     * 
-     * @param graphImporter
-     *            the importer
+     *
+     * @param graphImporter the importer
      */
     void setGraphImporter(GraphImporter graphImporter) {
         this.graphImporter = graphImporter;
@@ -71,8 +69,12 @@ public class HtmlOnlyCrawler extends WebCrawler {
         graphImporter = (GraphImporter) customData[1];
     }
 
-    @Override
     public boolean shouldVisit(WebURL url) {
+        return shouldVisit(null, url);
+    }
+
+    @Override
+    public boolean shouldVisit(Page referringPage, WebURL url) {
         return shouldVisit(url, null);
     }
 
@@ -80,22 +82,22 @@ public class HtmlOnlyCrawler extends WebCrawler {
         final String lowerCaseUrl = url.getURL().toLowerCase();
 
         if (isMediaUrl(lowerCaseUrl)) {
-            logger.trace("Ignoring " + url + ": media files, CSS and JavaScript URLs will not be crawled");
+            logger.trace(String.format("Ignoring %s: media files, CSS and JavaScript URLs will not be crawled", url));
             return false;
         }
 
         if (INCORRECT_MEDIA_PATTERN.matcher(lowerCaseUrl).matches()) {
             String linkedFromStr = (parentNode == null) ? "" : " linked from " + PageNode.getUrl(parentNode);
-            logger.warn("Ignoring incorrect media URL " + url + linkedFromStr);
+            logger.warn(String.format("Ignoring incorrect media URL %s%s", url, linkedFromStr));
             return false;
         }
 
         if (!appConfig.isCrawlableUrl(lowerCaseUrl)) {
-            logger.trace("Ignoring " + url + ": this domain is not configured for crawling");
+            logger.trace(String.format("Ignoring %s: this domain is not configured for crawling", url));
             try {
                 final String host = UrlUtil.extractHost(lowerCaseUrl);
                 // ideally we want to save the domain only, we do not care about each individual url
-                if (host != null && !host.isEmpty()) {
+                if (!host.isEmpty()) {
                     addExcludedDomainToFailedUrls(host);
                 } else {
                     addExcludedDomainToFailedUrls(url.getURL());
@@ -147,15 +149,14 @@ public class HtmlOnlyCrawler extends WebCrawler {
 
         String statusMessage = FailedUrls.getInstance().getStatusMessage("FailedRequest", webUrl);
         if (statusMessage != null) {
-            logger.warn("Ignoring bad URL " + webUrl + " - " + statusMessage);
+            logger.warn(String.format("Ignoring bad URL %s - %s", webUrl, statusMessage));
             return;
         }
 
         int pageCounter = atomicPageCounter.incrementAndGet();
 
         if (graphImporter != null) {
-            logger.info("Importing page # " + pageCounter + ": " + webUrl + " (node count so far: "
-                    + graphImporter.getNumberOfPageNodes() + ")");
+            logger.info(String.format("Importing page # %d: %s (node count so far: %d)", pageCounter, webUrl, graphImporter.getNumberOfPageNodes()));
 
             if (page.getParseData() instanceof HtmlParseData) {
                 visitHtmlPage(webUrl.getURL(), (HtmlParseData) page.getParseData());
@@ -174,14 +175,14 @@ public class HtmlOnlyCrawler extends WebCrawler {
         }
     }
 
-    private void visitHtmlLinks(Node pageNode, List<WebURL> links) {
-        logger.trace("Number of outgoing links from " + PageNode.getUrl(pageNode) + ": " + links.size());
+    private void visitHtmlLinks(Node pageNode, Set<WebURL> links) {
+        logger.trace(String.format("Number of outgoing links from %s: %d", PageNode.getUrl(pageNode), links.size()));
 
-        if (links == null || links.isEmpty()) {
+        if (links.isEmpty()) {
             return;
         }
 
-        List<String> crawlableLinks = new ArrayList<String>(links.size());
+        List<String> crawlableLinks = new ArrayList<>(links.size());
         for (WebURL link : links) {
             if (shouldVisit(link, pageNode)) {
                 crawlableLinks.add(link.getURL());

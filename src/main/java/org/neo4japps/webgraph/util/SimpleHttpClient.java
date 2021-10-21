@@ -1,9 +1,5 @@
 package org.neo4japps.webgraph.util;
 
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -21,6 +17,10 @@ import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class SimpleHttpClient {
     private static final AtomicInteger instanceCounter = new AtomicInteger();
 
@@ -33,11 +33,9 @@ public class SimpleHttpClient {
 
     /**
      * Creates a HTTP client.
-     * 
-     * @param parent
-     *            Owning object. Used for logging.
-     * @param maxCacheEntries
-     *            the maximum number of cache entries the cache will retain. Set to 0 for no caching.
+     *
+     * @param parent          Owning object. Used for logging.
+     * @param maxCacheEntries the maximum number of cache entries the cache will retain. Set to 0 for no caching.
      */
     public SimpleHttpClient(Object parent, int maxCacheEntries) {
         logger = Logger.getLogger(this.getClass().getName() + "-" + instanceCounter.incrementAndGet() + " ("
@@ -90,9 +88,8 @@ public class SimpleHttpClient {
     /**
      * Retrieves the textual content of a HTTP response triggered by a HTTP GET request to the specified URI. The
      * content itself can be HTML, XML, JSON,... whatever.
-     * 
-     * @param uri
-     *            The URI to get
+     *
+     * @param uri The URI to get
      * @return the content of the HTTP response, or null if the response cannot be read
      */
     public String httpGet(String uri) {
@@ -108,7 +105,7 @@ public class SimpleHttpClient {
             if (entity != null) {
                 return getEntityContent(entity, uri);
             } else {
-                logger.warn("Cannot read response for URI " + uri + ". It has no content.");
+                logger.warn(String.format("Cannot read response for URI %s. It has no content.", uri));
             }
         } catch (Exception e) {
             logger.warn("Cannot read response for URI " + uri, e);

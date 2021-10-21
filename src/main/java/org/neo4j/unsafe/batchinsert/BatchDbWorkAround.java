@@ -10,7 +10,6 @@ public final class BatchDbWorkAround {
     public static BatchInserterIndexProvider createLuceneBatchInserterIndexProvider(GraphDatabaseService batchDb) {
         // we can only call this from the same package
         BatchInserter inserter = ((BatchGraphDatabaseImpl) batchDb).getBatchInserter();
-
         return new LuceneBatchInserterIndexProvider(inserter);
     }
 }

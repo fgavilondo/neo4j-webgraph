@@ -1,5 +1,12 @@
 package org.neo4japps.webgraph.importer;
 
+import org.neo4j.graphdb.*;
+import org.neo4j.graphdb.index.Index;
+import org.neo4j.graphdb.index.UniqueFactory;
+import org.neo4j.test.TestGraphDatabaseFactory;
+import org.neo4japps.webgraph.util.ListChunker;
+import org.neo4japps.webgraph.util.UrlUtil;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -10,17 +17,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
-
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.UniqueFactory;
-import org.neo4j.test.TestGraphDatabaseFactory;
-import org.neo4japps.webgraph.util.ListChunker;
-import org.neo4japps.webgraph.util.UrlUtil;
 
 /**
  * This importer uses transactions for graph modifications and can be accessed by multiple threads.
@@ -55,6 +51,7 @@ public final class TransactionalGraphImporter extends AbstractObservableGraphImp
 
         @Override
         public void lockInterruptibly() throws InterruptedException {
+            // not needed
         }
 
         @Override
@@ -69,6 +66,7 @@ public final class TransactionalGraphImporter extends AbstractObservableGraphImp
 
         @Override
         public void unlock() {
+            // not needed
         }
 
         @Override
@@ -88,14 +86,14 @@ public final class TransactionalGraphImporter extends AbstractObservableGraphImp
      * For unit testing
      */
     public static TransactionalGraphImporter createImpermanentInstance(String rootUrl, long startTimeInMillis,
-            int importProgressReportFrequency, int transactionSize) {
+                                                                       int importProgressReportFrequency, int transactionSize) {
         return new TransactionalGraphImporter(
                 new TestGraphDatabaseFactory().newImpermanentDatabaseBuilder().newGraphDatabase(), rootUrl,
                 startTimeInMillis, importProgressReportFrequency, transactionSize);
     }
 
     public TransactionalGraphImporter(GraphDatabaseService graphDb, String rootUrl, long startTimeInMillis,
-            int importProgressReportFrequency, int transactionSize) {
+                                      int importProgressReportFrequency, int transactionSize) {
 
         super(rootUrl, startTimeInMillis, importProgressReportFrequency);
 
@@ -151,8 +149,8 @@ public final class TransactionalGraphImporter extends AbstractObservableGraphImp
         if (isStopped.get())
             return null;
 
-        String domain = null;
-        String type = null;
+        String domain;
+        String type;
 
         try {
             URL urlObject = new URL(url);
@@ -163,7 +161,7 @@ public final class TransactionalGraphImporter extends AbstractObservableGraphImp
             return null;
         }
 
-        Node node = null;
+        Node node;
         if (useTransaction) {
             node = addOrModifyPageInTransaction(url, domain, type, content);
         } else {
@@ -174,14 +172,9 @@ public final class TransactionalGraphImporter extends AbstractObservableGraphImp
     }
 
     private Node addOrModifyPageInTransaction(final String url, final String domain, final String type,
-            final String content) {
+                                              final String content) {
         try {
-            Callable<Object> task = new Callable<Object>() {
-                @Override
-                public Object call() throws Exception {
-                    return addOrModifyPage(url, domain, type, content);
-                }
-            };
+            Callable<Object> task = () -> addOrModifyPage(url, domain, type, content);
             return (Node) transactionTemplate.execute(task, this);
         } catch (Exception e) {
             logger.error(e);
@@ -257,14 +250,11 @@ public final class TransactionalGraphImporter extends AbstractObservableGraphImp
      * Note that deadlocks are possible if 2 threads try to create the opposite links at the same time (A-->B, B-->A).
      * In that case this method will sleep for one second and retry up to 10 times before giving up (the other thread's
      * transaction will release the locks eventually).
-     * 
-     * @param fromPage
-     * @param toUrls
      */
     @Override
     public List<Relationship> addLinks(Node fromPage, List<String> toUrls) {
         if (isStopped.get())
-            return new ArrayList<Relationship>();
+            return new ArrayList<>();
 
         NodesAndRelationshipsTuple tuple = doAddLinksInTransaction(fromPage, toUrls);
 
@@ -274,13 +264,13 @@ public final class TransactionalGraphImporter extends AbstractObservableGraphImp
         return tuple.relationships;
     }
 
-    class NodesAndRelationshipsTuple {
+    static class NodesAndRelationshipsTuple {
         final List<Node> nodes;
         final List<Relationship> relationships;
 
         public NodesAndRelationshipsTuple() {
-            this.nodes = new ArrayList<Node>();
-            this.relationships = new ArrayList<Relationship>();
+            this.nodes = new ArrayList<>();
+            this.relationships = new ArrayList<>();
         }
 
         public NodesAndRelationshipsTuple(List<Node> nodes, List<Relationship> relationships) {
@@ -301,7 +291,7 @@ public final class TransactionalGraphImporter extends AbstractObservableGraphImp
             return result;
         }
 
-        ListChunker<String> chunker = new ListChunker<String>(toUrls, transactionSize);
+        ListChunker<String> chunker = new ListChunker<>(toUrls, transactionSize);
         while (chunker.hasMore()) {
             final List<String> chunk = chunker.getNextChunk();
             NodesAndRelationshipsTuple chunkResult = doAddLinksChunkInTransaction(fromPage, chunk);
@@ -313,14 +303,14 @@ public final class TransactionalGraphImporter extends AbstractObservableGraphImp
         return result;
     }
 
-    protected NodesAndRelationshipsTuple doAddLinksChunkInTransaction(final Node fromPage, final List<String> toUrls) {
+    private NodesAndRelationshipsTuple doAddLinksChunkInTransaction(final Node fromPage, final List<String> toUrls) {
         try {
-            Callable<Object> task = new Callable<Object>() {
-                final List<Node> nodes = new ArrayList<Node>(toUrls.size());
-                final List<Relationship> links = new ArrayList<Relationship>(toUrls.size());
+            Callable<Object> task = new Callable<>() {
+                final List<Node> nodes = new ArrayList<>(toUrls.size());
+                final List<Relationship> links = new ArrayList<>(toUrls.size());
 
                 @Override
-                public Object call() throws Exception {
+                public Object call() {
                     for (final String toUrl : toUrls) {
                         Node linkedPage = getPage(toUrl);
                         if (linkedPage == null) {

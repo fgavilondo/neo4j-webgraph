@@ -12,6 +12,7 @@
 
 # Ignore temporary crawl data
 /crawl-data
+/logs
 
 #Ignore Eclipse IDE files
 /.settings

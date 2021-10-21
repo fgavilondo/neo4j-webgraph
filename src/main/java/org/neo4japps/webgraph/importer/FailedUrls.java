@@ -1,28 +1,23 @@
 package org.neo4japps.webgraph.importer;
 
+import edu.uci.ics.crawler4j.url.WebURL;
+import org.apache.log4j.Logger;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-
-import org.apache.log4j.Logger;
-
-import edu.uci.ics.crawler4j.url.WebURL;
 
 public final class FailedUrls {
 
     private static final FailedUrls singleton = new FailedUrls();
 
-    private final DateFormat formatter = SimpleDateFormat.getDateTimeInstance();
+    private static final DateFormat FORMATTER = SimpleDateFormat.getDateTimeInstance();
 
     // Map type of error --> (Map URL --> status message)
-    private final Map<String, Map<String, String>> theMap = new HashMap<String, Map<String, String>>();
+    private final Map<String, Map<String, String>> theMap = new HashMap<>();
 
     public static FailedUrls getInstance() {
         return singleton;
@@ -38,20 +33,15 @@ public final class FailedUrls {
     }
 
     private String now() {
-        synchronized (formatter) {
-            return formatter.format(new Date());
+        synchronized (FORMATTER) {
+            return FORMATTER.format(new Date());
         }
     }
 
     private Map<String, String> getOrCreateMap(String errorType) {
         synchronized (theMap) {
-            Map<String, String> map = theMap.get(errorType);
-            if (map == null) {
-                // using LinkedHashMap to preserve the chronological insertion order when iterating over the map
-                map = Collections.synchronizedMap(new LinkedHashMap<String, String>());
-                theMap.put(errorType, map);
-            }
-            return map;
+            // using LinkedHashMap to preserve the chronological insertion order when iterating over the map
+            return theMap.computeIfAbsent(errorType, k -> Collections.synchronizedMap(new LinkedHashMap<>()));
         }
     }
 
@@ -66,7 +56,7 @@ public final class FailedUrls {
     }
 
     private void reportErrorType(Logger logger, int maxNumberOfUrlsToDisplay, String errorType,
-            Map<String, String> map) {
+                                 Map<String, String> map) {
         if (map.isEmpty()) {
             return;
         }

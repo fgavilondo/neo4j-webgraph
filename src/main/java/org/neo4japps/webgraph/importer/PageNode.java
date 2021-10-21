@@ -1,12 +1,11 @@
 package org.neo4japps.webgraph.importer;
 
-import java.util.concurrent.locks.Lock;
-
 import org.neo4j.graphdb.Node;
+
+import java.util.concurrent.locks.Lock;
 
 /**
  * Static wrapper for easy access to common page node properties.
- * 
  */
 public class PageNode {
 
@@ -66,7 +65,7 @@ public class PageNode {
 
     public static boolean hasNoContent(Node page) {
         final String content = getContent(page);
-        return content.length() == 0 || content.equals(UNKNOWN_PAGE_CONTENT);
+        return content == null || content.isEmpty() || content.equals(UNKNOWN_PAGE_CONTENT);
     }
 
     public static int getFacebookTotalCount(Node page) {
@@ -159,7 +158,7 @@ public class PageNode {
     // "has"
 
     public static boolean hasProperty(Node page, String key) {
-        return page == null ? false : page.hasProperty(key);
+        return page != null && page.hasProperty(key);
     }
 
     public static boolean hasProperty(Node page, String key, Lock lock) {

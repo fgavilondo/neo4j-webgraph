@@ -10,9 +10,8 @@ public class FacebookEventHandler extends SocialMediaEventHandler {
 
     /**
      * For unit test mocking
-     * 
-     * @param facebookClient
-     *            the facebookClient to set
+     *
+     * @param facebookClient the facebookClient to set
      */
     void setFacebookClient(SocialMediaClient facebookClient) {
         this.facebookClient = facebookClient;

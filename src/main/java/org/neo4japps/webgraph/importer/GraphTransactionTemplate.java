@@ -1,11 +1,11 @@
 package org.neo4japps.webgraph.importer;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.log4j.Logger;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.kernel.DeadlockDetectedException;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Utility class to execute arbitrary code wrapped in a Neo4j transaction. The template reduces the need for having to
@@ -39,14 +39,11 @@ public class GraphTransactionTemplate {
     /**
      * Execute the given task wrapped in a Neo4j transaction. In the case of deadlock retry the transaction up to 10
      * times with 1 second pauses in-between.
-     * 
-     * @param task
-     *            the task to execute
-     * @param graphImporter
-     *            the graph importer used to create the transaction
+     *
+     * @param task          the task to execute
+     * @param graphImporter the graph importer used to create the transaction
      * @return whatever the task returns
-     * @throws Exception
-     *             if unable to compute a result
+     * @throws Exception if unable to compute a result
      */
     public Object execute(Callable<Object> task, GraphImporter graphImporter) throws Exception {
         return execute(task, graphImporter, DEFAULT_MAX_RETRIES, DEFAULT_SLEEP_MILLIS);
@@ -55,16 +52,13 @@ public class GraphTransactionTemplate {
     /**
      * Execute the given task wrapped in a Neo4j transaction. In the case of deadlock retry the transaction up to
      * 'maxRetries' times with 'sleepMillis' long pauses in-between.
-     * 
-     * @param task
-     *            the task to execute
-     * @param graphImporter
-     *            the graph importer used to create the transaction
-     * @param maxRetries
-     * @param sleepMillis
+     *
+     * @param task          the task to execute
+     * @param graphImporter the graph importer used to create the transaction
+     * @param maxRetries    max retries
+     * @param sleepMillis   time to sleep between retries
      * @return whatever the task returns
-     * @throws Exception
-     *             if unable to compute a result
+     * @throws Exception if unable to compute a result
      */
     public Object execute(Callable<Object> task, GraphImporter graphImporter, int maxRetries, int sleepMillis)
             throws Exception {

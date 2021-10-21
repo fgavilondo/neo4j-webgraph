@@ -8,12 +8,10 @@ public final class UrlUtil {
     /**
      * E.g. for http://mydomain.com this method returns mydomain.com, for http://www.mydomain.com this method also
      * returns mydomain.com
-     * 
-     * @param urlString
-     *            the String to parse as a URL
+     *
+     * @param urlString the String to parse as a URL
      * @return the host part of the URL, excluding any leading "www"
-     * @throws MalformedURLException
-     *             If the string specifies an unknown protocol
+     * @throws MalformedURLException If the string specifies an unknown protocol
      */
     public static String extractHost(String urlString) throws MalformedURLException {
         URL url = new URL(cleanUp(urlString));
@@ -27,9 +25,8 @@ public final class UrlUtil {
     /**
      * E.g. for http://mydomain.com this method returns mydomain.com, for http://www.mydomain.com this method also
      * returns mydomain.com
-     * 
-     * @param url
-     *            the URL to analyze
+     *
+     * @param url the URL to analyze
      * @return the host part of the URL, excluding any leading "www"
      */
     private static String extractHost(URL url) {
@@ -39,9 +36,8 @@ public final class UrlUtil {
     /**
      * E.g. for http://mydomain.com this method returns "mydomain", for http://www.mydomain.com this method also returns
      * "mydomain"
-     * 
-     * @param url
-     *            the URL to analyze
+     *
+     * @param url the URL to analyze
      * @return the domain part of the URL, i.e. the part up to the first ".", ignoring any leading "www"
      */
     public static String extractDomain(URL url) {
@@ -81,10 +77,6 @@ public final class UrlUtil {
 
         // now we are dealing with a clean URL
         String path = url.getPath().trim();
-        if ((path.isEmpty() || path.equals("/")) && url.getQuery() == null && url.getRef() == null) {
-            return true;
-        }
-
-        return false;
+        return (path.isEmpty() || path.equals("/")) && url.getQuery() == null && url.getRef() == null;
     }
 }

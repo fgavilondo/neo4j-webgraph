@@ -6,6 +6,10 @@ import java.nio.file.Files;
 
 public final class DirectoryUtil {
 
+    private DirectoryUtil() {
+
+    }
+
     public static void deleteDir(String dirName) throws IOException {
         deleteDir(new File(dirName));
     }
@@ -16,8 +20,11 @@ public final class DirectoryUtil {
 
         if (dir.isDirectory()) {
             String[] children = dir.list();
-            for (int i = 0; i < children.length; i++) {
-                deleteDir(new File(dir, children[i]));
+            if (children == null) {
+                return;
+            }
+            for (String child : children) {
+                deleteDir(new File(dir, child));
             }
         }
 

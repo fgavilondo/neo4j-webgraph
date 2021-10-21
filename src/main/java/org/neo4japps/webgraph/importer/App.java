@@ -1,16 +1,10 @@
 package org.neo4japps.webgraph.importer;
 
-import java.io.IOException;
-import java.text.DateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.MissingResourceException;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import edu.uci.ics.crawler4j.crawler.CrawlConfig;
+import edu.uci.ics.crawler4j.crawler.CrawlController;
+import edu.uci.ics.crawler4j.fetcher.PageFetcher;
+import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
+import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import org.apache.log4j.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -18,11 +12,10 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4japps.webgraph.util.DirectoryUtil;
 import org.neo4japps.webgraph.util.StringFormatUtil;
 
-import edu.uci.ics.crawler4j.crawler.CrawlConfig;
-import edu.uci.ics.crawler4j.crawler.CrawlController;
-import edu.uci.ics.crawler4j.fetcher.PageFetcher;
-import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
-import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class App {
     private final Set<GraphObserver> graphObservers = Collections.synchronizedSet(new HashSet<GraphObserver>());
@@ -45,25 +38,12 @@ public class App {
 
     /**
      * Package private visibility for unit testing.
-     * 
+     * <p>
      * Pass silent = true to skip printing help and other messages in tests.
      */
     App(String[] args, boolean silent) {
         this.args = args;
         this.silent = silent;
-    }
-
-    /**
-     * Package private visibility for unit testing.
-     * 
-     * Pass silent = true to skip printing help and other messages in tests.
-     */
-    App(ApplicationConfiguration config, GraphImporter importer, boolean silent) {
-        this.args = null;
-        this.silent = silent;
-
-        this.appConfig = config;
-        this.graphImporter = importer;
     }
 
     public void run() throws Exception {
@@ -80,7 +60,7 @@ public class App {
         }
 
         if (!silent) {
-            appConfig.confirm(System.out, System.in);
+            appConfig.confirm();
         }
 
         if (!appConfig.isResumableImport()) {
@@ -233,16 +213,13 @@ public class App {
         // Registers a shutdown hook for the Application so that it
         // shuts down nicely when the VM exits (even if you "Ctrl-C" the
         // running application before it's completed)
-        Thread shutdownHook = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    shutdown(false);
-                } catch (Exception e) {
-                    logger.warn("Shutdown error", e);
-                }
+        Thread shutdownHook = new Thread(() -> {
+            try {
+                shutdown(false);
+            } catch (Exception e) {
+                logger.warn("Shutdown error", e);
             }
-        };
+        });
 
         Runtime.getRuntime().addShutdownHook(shutdownHook);
     }
@@ -256,8 +233,7 @@ public class App {
             return;
         }
 
-        for (int i = 0; i < classNames.length; i++) {
-            String className = classNames[i];
+        for (String className : classNames) {
             Class<GraphObserver> clazz;
             try {
                 clazz = (Class<GraphObserver>) Class.forName(className);
@@ -289,7 +265,7 @@ public class App {
         CrawlController crawlController = new CrawlController(crawlConfig, pageFetcher, robotsTxtServer);
 
         // "dependency injection" into crawlers
-        Object[] customData = new Object[] { appConfig, graphImporter };
+        Object[] customData = new Object[]{appConfig, graphImporter};
         crawlController.setCustomData(customData);
 
         addSeedUrls(crawlController);
@@ -357,15 +333,15 @@ public class App {
      */
     private void addSeedUrls(CrawlController crawlController) {
         String[] seedUrls = appConfig.getSeedUrls();
-        for (int i = 0; i < seedUrls.length; i++) {
-            crawlController.addSeed(seedUrls[i]);
+        for (String seedUrl : seedUrls) {
+            crawlController.addSeed(seedUrl);
         }
     }
 
     private void reportResults() {
         if (!silent) {
             final long endMillis = System.currentTimeMillis();
-            final double elapsedSeconds = (endMillis - startTimeInMillis) / 1000;
+            final double elapsedSeconds = (endMillis - startTimeInMillis) / 1000.00;
             logger.info("");
             logger.info("Finished importing at " + DateFormat.getDateTimeInstance().format(new Date(endMillis)));
             logger.info("Elapsed time: " + StringFormatUtil.formatSeconds(elapsedSeconds) + " secs ("

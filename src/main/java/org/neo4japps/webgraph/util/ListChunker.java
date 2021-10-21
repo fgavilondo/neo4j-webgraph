@@ -16,14 +16,14 @@ public class ListChunker<T> {
             throw new IllegalArgumentException("chunkSize must be greater than one");
         }
         this.chunkSize = chunkSize;
-        this.list = list == null ? Collections.EMPTY_LIST : list;
+        this.list = list == null ? Collections.emptyList() : list;
 
         initIndices();
     }
 
     protected void initIndices() {
         fromIndex = 0;
-        toIndex = (list.size() > chunkSize) ? chunkSize : list.size();
+        toIndex = Math.min(list.size(), chunkSize);
     }
 
     public boolean hasMore() {
@@ -38,6 +38,6 @@ public class ListChunker<T> {
 
     private void advanceIndices() {
         fromIndex = toIndex;
-        toIndex = list.size() > (toIndex + chunkSize) ? toIndex + chunkSize : list.size();
+        toIndex = Math.min(list.size(), (toIndex + chunkSize));
     }
 }

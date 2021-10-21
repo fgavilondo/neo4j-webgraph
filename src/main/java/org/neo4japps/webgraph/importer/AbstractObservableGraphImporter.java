@@ -1,14 +1,14 @@
 package org.neo4japps.webgraph.importer;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.log4j.Logger;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4japps.webgraph.util.StringFormatUtil;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class AbstractObservableGraphImporter extends ConcurrentObservable implements GraphImporter {
 
@@ -26,7 +26,7 @@ public abstract class AbstractObservableGraphImporter extends ConcurrentObservab
 
     protected final AtomicBoolean isStopped = new AtomicBoolean();
 
-    public AbstractObservableGraphImporter(String rootUrl, long startTimeInMillis, int importProgressReportFrequency) {
+    protected AbstractObservableGraphImporter(String rootUrl, long startTimeInMillis, int importProgressReportFrequency) {
         if (importProgressReportFrequency < 1) {
             throw new IllegalArgumentException("Value for importProgressReportFrequency must be greater than 0");
         }
@@ -149,7 +149,7 @@ public abstract class AbstractObservableGraphImporter extends ConcurrentObservab
         int numberOfCreatedNodes = getNumberOfPageNodes();
         if (numberOfCreatedNodes % reportFrequency == 0) {
             final long endMillis = System.currentTimeMillis();
-            final double elapsedSeconds = (endMillis - startTimeInMillis) / 1000;
+            final double elapsedSeconds = (endMillis - startTimeInMillis) / 1000.00;
             // avoid division by zero!
             final double nodesPerSecond = (elapsedSeconds == 0.00) ? numberOfCreatedNodes
                     : (numberOfCreatedNodes / elapsedSeconds);

@@ -1,14 +1,13 @@
 package org.neo4japps.webgraph.customhandlers;
 
-import org.neo4japps.webgraph.util.SimpleHttpClient;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import org.neo4japps.webgraph.util.SimpleHttpClient;
 
 /**
  * This class is thread-safe.
  */
-public class TwitterClient extends SocialMediaClientBase {
+public class TwitterClient extends AbstractSocialMediaClient {
 
     public TwitterClient(SimpleHttpClient httpClient) {
         super(httpClient);
@@ -20,7 +19,7 @@ public class TwitterClient extends SocialMediaClientBase {
         // of
         // "Unable to access URL counting services" errors
         // see https://dev.twitter.com/discussions/9025
-        return "http://urls.api.twitter.com/1/urls/count.json?url=";
+        return "https://urls.api.twitter.com/1/urls/count.json?url=";
     }
 
     @Override
@@ -42,8 +41,6 @@ public class TwitterClient extends SocialMediaClientBase {
         // {"count":3115,"url":"http://mydomain.com/"}
 
         if (jsonString != null && jsonString.contains("Unable to access URL counting services")) {
-            // Sample error JSON:
-            // {"errors":[{"code":48,"message":"Unable to access URL counting services"}]}
             throw new ServiceUnavailableException("Unable to access URL counting services for URL " + url);
         }
 

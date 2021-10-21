@@ -1,20 +1,17 @@
 package org.neo4japps.webgraph.importer;
 
+import org.apache.log4j.Logger;
+import org.neo4j.graphdb.Node;
+import org.neo4japps.webgraph.util.ListChunker;
+
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.log4j.Logger;
-import org.neo4j.graphdb.Node;
-import org.neo4japps.webgraph.util.ListChunker;
-
 /**
- * Observers can be invoked by multiple threads concurrently so they must be thread-safe, and ideally stateless.
- * 
- * If an observer is intended to be used in conjunction with a {@link TransactionalGraphImporter} you can extend
- * {@link TransactionCapableGraphObserver} which provides transactional scaffolding.
- * 
+ * Observers can be invoked by multiple threads concurrently, so they must be thread-safe, and ideally stateless.
+ * <p/>
  * If an observer is intended to be used in conjunction with a {@link BatchGraphImporter} and multiple crawler threads
  * care must be taken to use the lock provided by {@link GraphImporter#getLock()} when accessing and modifying the graph
  * in your observer.
@@ -116,19 +113,16 @@ public abstract class GraphObserver {
         try {
             doUpdate((GraphImporter) source, event);
         } catch (Exception e) {
-            logger.warn("Error processing " + event.toString(), e);
+            logger.warn("Error processing " + event, e);
         }
     }
 
-    private Object doUpdate(GraphImporter graphImporter, PageNodesModificationEvent event) throws Exception {
-
+    private void doUpdate(GraphImporter graphImporter, PageNodesModificationEvent event) throws Exception {
         if (useTransactions) {
             doUpdateUsingTransactions(graphImporter, event);
         } else {
             doUpdateWithoutTransaction(graphImporter, event);
         }
-
-        return null;
     }
 
     private void doUpdateWithoutTransaction(GraphImporter graphImporter, PageNodesModificationEvent event) {
@@ -170,7 +164,7 @@ public abstract class GraphObserver {
                 updateSinglePageInTransaction(page, graphImporter);
             }
         } else {
-            ListChunker<Node> chunker = new ListChunker<Node>(pages, transactionSize);
+            ListChunker<Node> chunker = new ListChunker<>(pages, transactionSize);
             while (chunker.hasMore()) {
                 updateChunkInTransaction(chunker.getNextChunk(), graphImporter);
             }
@@ -187,19 +181,16 @@ public abstract class GraphObserver {
             return null;
         }
 
-        Callable<Object> task = new Callable<Object>() {
-            @Override
-            public Object call() throws Exception {
-                try {
-                    Node updatedPage = updatePage(page, graphImporter);
-                    int counter = incrementNumberOfUpdatedPages();
-                    reportProgress(counter, "updated");
-                    return updatedPage;
-                } catch (Exception e) {
-                    logger.warn("Failure updating page " + PageNode.getUrl(page), e);
-                    incrementNumberOfFailedUpdates();
-                    return null;
-                }
+        Callable<Object> task = () -> {
+            try {
+                Node updatedPage = updatePage(page, graphImporter);
+                int counter = incrementNumberOfUpdatedPages();
+                reportProgress(counter, "updated");
+                return updatedPage;
+            } catch (Exception e) {
+                logger.warn("Failure updating page " + PageNode.getUrl(page), e);
+                incrementNumberOfFailedUpdates();
+                return null;
             }
         };
 
@@ -209,30 +200,27 @@ public abstract class GraphObserver {
     protected Object updateChunkInTransaction(final List<Node> chunk, final GraphImporter graphImporter)
             throws Exception {
 
-        Callable<Object> task = new Callable<Object>() {
-            @Override
-            public Object call() throws Exception {
-                for (Node page : chunk) {
-                    decrementNumberOfPageNodesPendingProcessing();
+        Callable<Object> task = () -> {
+            for (Node page : chunk) {
+                decrementNumberOfPageNodesPendingProcessing();
 
-                    if (shouldIgnore(page, graphImporter)) {
-                        int counter = incrementNumberOfIgnoredPageNodes();
-                        reportProgress(counter, "ignored");
-                        continue;
-                    }
-
-                    try {
-                        updatePage(page, graphImporter);
-                        int counter = incrementNumberOfUpdatedPages();
-                        reportProgress(counter, "updated");
-                    } catch (Exception e) {
-                        logger.warn("Failure updating page node " + PageNode.getUrl(page), e);
-                        incrementNumberOfFailedUpdates();
-                    }
+                if (shouldIgnore(page, graphImporter)) {
+                    int counter = incrementNumberOfIgnoredPageNodes();
+                    reportProgress(counter, "ignored");
+                    continue;
                 }
 
-                return null;
+                try {
+                    updatePage(page, graphImporter);
+                    int counter = incrementNumberOfUpdatedPages();
+                    reportProgress(counter, "updated");
+                } catch (Exception e) {
+                    logger.warn("Failure updating page node " + PageNode.getUrl(page), e);
+                    incrementNumberOfFailedUpdates();
+                }
             }
+
+            return null;
         };
 
         // increase deadlock retry timeout as this is potentially a big transaction

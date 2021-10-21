@@ -1,48 +1,48 @@
 package org.neo4japps.webgraph.importer;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.locks.Lock;
-
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.locks.Lock;
+
 public interface GraphImporter {
 
-    public abstract Lock getLock();
+    Lock getLock();
 
-    public abstract Transaction beginDbTransaction();
+    Transaction beginDbTransaction();
 
-    public abstract Node createNode();
+    Node createNode();
 
-    public abstract void addCategoryNodeToIndex(Node node);
+    void addCategoryNodeToIndex(Node node);
 
-    public abstract Node addPage(String url, String content);
+    Node addPage(String url, String content);
 
-    public abstract List<Relationship> addLinks(Node fromPage, List<String> toUrls);
+    List<Relationship> addLinks(Node fromPage, List<String> toUrls);
 
-    public abstract Node getReferenceNode();
+    Node getReferenceNode();
 
-    public abstract Node getRootPage();
+    Node getRootPage();
 
-    public abstract Node getPage(String url);
+    Node getPage(String url);
 
-    public abstract int getNumberOfPageNodes();
+    int getNumberOfPageNodes();
 
-    public abstract int getNumberOfLinks();
+    int getNumberOfLinks();
 
-    public abstract Iterator<Node> getAllPagesForDomain(String domain);
+    Iterator<Node> getAllPagesForDomain(String domain);
 
-    public abstract int getNumberOfPagesForDomain(String domain);
+    int getNumberOfPagesForDomain(String domain);
 
-    public abstract Iterator<Node> getAllPagesOfType(String type);
+    Iterator<Node> getAllPagesOfType(String type);
 
-    public abstract int getNumberOfPagesOfType(String type);
+    int getNumberOfPagesOfType(String type);
 
-    public abstract void waitForImportToFinish() throws InterruptedException;
+    void waitForImportToFinish() throws InterruptedException;
 
-    public abstract void stop();
+    void stop();
 
-    public abstract void shutdown();
+    void shutdown();
 }

@@ -6,7 +6,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class ConcurrentObservable {
 
-    private final List<GraphObserver> observers = new CopyOnWriteArrayList<GraphObserver>();
+    private final List<GraphObserver> observers = new CopyOnWriteArrayList<>();
 
     public final List<GraphObserver> getObservers() {
         return Collections.unmodifiableList(observers);

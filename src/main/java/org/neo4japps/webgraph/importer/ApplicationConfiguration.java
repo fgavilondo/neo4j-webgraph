@@ -1,23 +1,13 @@
 package org.neo4japps.webgraph.importer;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.net.MalformedURLException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.MissingResourceException;
-import java.util.Properties;
-import java.util.Set;
-
-import org.neo4japps.webgraph.util.UrlUtil;
-
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import org.neo4japps.webgraph.util.UrlUtil;
+
+import java.io.*;
+import java.net.MalformedURLException;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class ApplicationConfiguration {
 
@@ -89,12 +79,12 @@ public class ApplicationConfiguration {
     private final Properties configProperties;
 
     // TODO make these configurable via command line
-    private final int maxConnectionsPerHost = 700; // hard-coded for now
-    private final int maxTotalConnections = 700; // hard-coded for now
-    private final boolean respectRobotsTxt = false; // hard-coded for now
-    private final String dbDir = DEFAULT_DB_DIR_LOCATION; // hard-coded for now
-    private final String crawlStorageDir = DEFAULT_CRAWL_DATA_ROOT; // hard-coded
-                                                                    // for now
+    private static final int MAX_CONNECTIONS_PER_HOST = 700; // hard-coded for now
+    private static final int MAX_TOTAL_CONNECTIONS = 700; // hard-coded for now
+    private static final boolean RESPECT_ROBOTS_TXT = false; // hard-coded for now
+    private static final String DB_DIR = DEFAULT_DB_DIR_LOCATION; // hard-coded for now
+    private static final String CRAWL_STORAGE_DIR = DEFAULT_CRAWL_DATA_ROOT; // hard-coded
+    // for now
 
     public ApplicationConfiguration(String[] cmdLineArgs) throws Exception {
         this(cmdLineArgs, null);
@@ -104,7 +94,7 @@ public class ApplicationConfiguration {
      * Constructor for unit tests so that we can use mock properties
      */
     public ApplicationConfiguration(String[] cmdLineArgs, Properties props) throws Exception {
-        cliOptions = OPTIONS_PARSER.parse(cmdLineArgs == null ? new String[] {} : cmdLineArgs);
+        cliOptions = OPTIONS_PARSER.parse(cmdLineArgs == null ? new String[]{} : cmdLineArgs);
 
         resumableImport = getOptionalBooleanArgument("r", false);
         includeBinaryContentInCrawling = getOptionalBooleanArgument("b", false);
@@ -215,7 +205,7 @@ public class ApplicationConfiguration {
     }
 
     public List<String> nonOptionArguments() {
-        return cliOptions.nonOptionArguments();
+        return (List<String>) cliOptions.nonOptionArguments();
     }
 
     public void dumpOn(PrintStream sink) {
@@ -286,7 +276,7 @@ public class ApplicationConfiguration {
     }
 
     public boolean isRespectRobotsTxt() {
-        return respectRobotsTxt;
+        return RESPECT_ROBOTS_TXT;
     }
 
     public int getNumberOfCrawlers() {
@@ -338,19 +328,19 @@ public class ApplicationConfiguration {
     }
 
     public int getMaxConnectionsPerHost() {
-        return maxConnectionsPerHost;
+        return MAX_CONNECTIONS_PER_HOST;
     }
 
     public int getMaxTotalConnections() {
-        return maxTotalConnections;
+        return MAX_TOTAL_CONNECTIONS;
     }
 
     public String getDbDir() {
-        return dbDir;
+        return DB_DIR;
     }
 
     public String getCrawlStorageDir() {
-        return crawlStorageDir;
+        return CRAWL_STORAGE_DIR;
     }
 
     public String getConfigFileName() {
@@ -422,8 +412,8 @@ public class ApplicationConfiguration {
     private boolean urlMatchesAtLeastOneDomain(String url, String[] domains) {
         try {
             String host = UrlUtil.extractHost(url);
-            for (int i = 0; i < domains.length; i++) {
-                if (host.contains(domains[i])) {
+            for (String domain : domains) {
+                if (host.contains(domain)) {
                     return true;
                 }
             }
@@ -433,15 +423,15 @@ public class ApplicationConfiguration {
         }
     }
 
-    void confirm(PrintStream sink, InputStream inputStream) throws IOException {
-        sink.println();
-        sink.println("Configuration:");
-        sink.println();
+    int confirm() throws IOException {
+        System.out.println();
+        System.out.println("Configuration:");
+        System.out.println();
 
-        dumpOn(sink);
+        dumpOn(System.out);
 
-        sink.println();
-        sink.print("Press ENTER to continue or Ctrl-C to quit...");
-        inputStream.read();
+        System.out.println();
+        System.out.print("Press ENTER to continue or Ctrl-C to quit...");
+        return System.in.read();
     }
 }

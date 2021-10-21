@@ -6,7 +6,7 @@ import org.neo4japps.webgraph.util.SimpleHttpClient;
 /**
  * This base class is thread-safe.
  */
-public abstract class SocialMediaClientBase implements SocialMediaClient {
+public abstract class AbstractSocialMediaClient implements SocialMediaClient {
     protected final Logger logger = Logger.getLogger(this.getClass());
 
     protected final SimpleHttpClient httpClient;
@@ -16,7 +16,7 @@ public abstract class SocialMediaClientBase implements SocialMediaClient {
     private volatile int politenessDelay = 0;
     private volatile long lastFetchTime = 0;
 
-    public SocialMediaClientBase(SimpleHttpClient httpClient) {
+    public AbstractSocialMediaClient(SimpleHttpClient httpClient) {
         this.httpClient = httpClient;
     }
 

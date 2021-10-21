@@ -1,24 +1,6 @@
 package org.neo4japps.webgraph.importer;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.unsafe.batchinsert.BatchDbWorkAround;
@@ -28,11 +10,20 @@ import org.neo4j.unsafe.batchinsert.BatchInserters;
 import org.neo4japps.webgraph.util.ListChunker;
 import org.neo4japps.webgraph.util.UrlUtil;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * This importer drops support for transactions and concurrency in favor of insertion speed. Only one thread at a time
  * may work against the underlying batch database/inserter.
- * 
- * Note that if if the JVM/machine crashes or we fail to invoke {@link GraphDatabaseService.shutdown()} before the JVM
+ * <p>
+ * Note that if the JVM/machine crashes or if we fail to shut down the DB before the JVM
  * exits the Neo4j store can be considered being in an inconsistent state and the insertion has to be re-done from
  * scratch.
  */
@@ -87,7 +78,6 @@ public class BatchGraphImporter extends AbstractObservableGraphImporter {
 
     private final Lock graphMutex = new ReentrantLock();
 
-    // private final BatchInserter inserter;
     private final GraphDatabaseService graphDb;
 
     private final BatchInserterIndexProvider indexProvider;
@@ -98,11 +88,9 @@ public class BatchGraphImporter extends AbstractObservableGraphImporter {
     final List<EventQueueConsumer> eventConsumers;
 
     public BatchGraphImporter(String storeDir, String rootUrl, long startTimeInMillis,
-            int importProgressReportFrequency, int numberOfEventHandlerThreads) {
+                              int importProgressReportFrequency, int numberOfEventHandlerThreads) {
         super(rootUrl, startTimeInMillis, importProgressReportFrequency);
 
-        // TODO Maybe use inserter for better performance
-        // inserter = BatchInserters.inserter(storeDir);
         graphDb = BatchInserters.batchDatabase(storeDir);
 
         // Need this workaround because we are using a batch db rather than a batch inserter
@@ -122,9 +110,9 @@ public class BatchGraphImporter extends AbstractObservableGraphImporter {
         if (eventQueueCapacity < 5) {
             eventQueueCapacity = 5;
         }
-        eventQueue = new ArrayBlockingQueue<PageNodesModificationEvent>(eventQueueCapacity);
+        eventQueue = new ArrayBlockingQueue<>(eventQueueCapacity);
 
-        eventConsumers = Collections.synchronizedList(new ArrayList<EventQueueConsumer>());
+        eventConsumers = Collections.synchronizedList(new ArrayList<>());
 
         for (int i = 1; i <= numberOfEventHandlerThreads; i++) {
             final String name = EventQueueConsumer.class.getSimpleName() + "-" + i;
@@ -167,8 +155,8 @@ public class BatchGraphImporter extends AbstractObservableGraphImporter {
         if (isStopped.get())
             return null;
 
-        String domain = null;
-        String type = null;
+        String domain;
+        String type;
 
         try {
             URL urlObject = new URL(url);
@@ -183,7 +171,7 @@ public class BatchGraphImporter extends AbstractObservableGraphImporter {
     }
 
     private Node addOrModifyPage(String url, String content, String domain, String type) {
-        Node page = null;
+        Node page;
 
         graphMutex.lock();
         try {
@@ -225,7 +213,7 @@ public class BatchGraphImporter extends AbstractObservableGraphImporter {
 
     @Override
     protected void updatePageIndex(Node page) {
-        final Map<String, Object> properties = new HashMap<String, Object>();
+        final Map<String, Object> properties = new HashMap<>();
         properties.put(PageNode.URL_KEY, PageNode.getUrl(page));
         properties.put(PageNode.DOMAIN_KEY, PageNode.getDomain(page));
         properties.put(PageNode.TYPE_KEY, PageNode.getType(page));
@@ -234,7 +222,7 @@ public class BatchGraphImporter extends AbstractObservableGraphImporter {
 
     @Override
     public void addCategoryNodeToIndex(Node node) {
-        final Map<String, Object> properties = new HashMap<String, Object>();
+        final Map<String, Object> properties = new HashMap<>();
         properties.put("name", node.getProperty("category"));
         categoryIndex.add(node.getId(), properties);
     }
@@ -263,9 +251,9 @@ public class BatchGraphImporter extends AbstractObservableGraphImporter {
      * process 20 pages each rather than 1 thread processing all 100 pages
      */
     private List<PageNodesModificationEvent> chunkUp(PageNodesModificationEvent event, int chunkSize) {
-        List<PageNodesModificationEvent> events = new ArrayList<PageNodesModificationEvent>();
+        List<PageNodesModificationEvent> events = new ArrayList<>();
 
-        ListChunker<Node> chunker = new ListChunker<Node>(event.getPages(), chunkSize);
+        ListChunker<Node> chunker = new ListChunker<>(event.getPages(), chunkSize);
         while (chunker.hasMore()) {
             final List<Node> chunk = chunker.getNextChunk();
             events.add(new PageNodesModificationEvent(event.getSource(), chunk));
@@ -276,7 +264,7 @@ public class BatchGraphImporter extends AbstractObservableGraphImporter {
 
     @Override
     public List<Relationship> addLinks(Node fromPage, List<String> toUrls) {
-        final List<Relationship> links = new ArrayList<Relationship>();
+        final List<Relationship> links = new ArrayList<>();
 
         if (isStopped.get()) {
             return links;
@@ -286,7 +274,7 @@ public class BatchGraphImporter extends AbstractObservableGraphImporter {
             return links;
         }
 
-        final List<Node> nodes = new ArrayList<Node>();
+        final List<Node> nodes = new ArrayList<>();
 
         graphMutex.lock();
         try {
@@ -401,7 +389,7 @@ public class BatchGraphImporter extends AbstractObservableGraphImporter {
     }
 
     private List<Node> getNodesByIds(IndexHits<Long> ids) {
-        final List<Node> nodes = new ArrayList<Node>(ids.size());
+        final List<Node> nodes = new ArrayList<>(ids.size());
         for (Long id : ids) {
             nodes.add(graphDb.getNodeById(id));
         }
@@ -414,7 +402,7 @@ public class BatchGraphImporter extends AbstractObservableGraphImporter {
             Thread.sleep(500);
         }
 
-        int activeConsumers = 0;
+        int activeConsumers;
 
         while ((activeConsumers = getNumberOfActiveConsumers()) > 0) {
             String message = activeConsumers == 1 ? " event consumer thread is still processing "
@@ -473,7 +461,6 @@ public class BatchGraphImporter extends AbstractObservableGraphImporter {
         indexProvider.shutdown();
 
         logger.trace("Shutting down database");
-        // inserter.shutdown();
         graphDb.shutdown();
 
         logger.trace("Finished importer shut down");

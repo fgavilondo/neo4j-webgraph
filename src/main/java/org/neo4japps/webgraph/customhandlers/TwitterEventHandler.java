@@ -10,9 +10,8 @@ public class TwitterEventHandler extends SocialMediaEventHandler {
 
     /**
      * For unit test mocking
-     * 
-     * @param twitterClient
-     *            the twitterClient to set
+     *
+     * @param twitterClient the twitterClient to set
      */
     void setTwitterClient(SocialMediaClient twitterClient) {
         this.twitterClient = twitterClient;

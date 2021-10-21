@@ -1,21 +1,25 @@
 # Project Info 
 
-Neo4j-Webgraph is a Java application to crawl the configured websites and import their pages and links as nodes and relationships into a Neo4j graph database.
+Neo4j-Webgraph is a Java application to crawl the configured websites and import their pages and links as nodes and relationships into a
+Neo4j graph database.
 
-You configure the application by placing a config.properties file at the root of the classpath (a template config file is provided with the source code in the src/main/resources directory)
+You configure the application by placing a config.properties file at the root of the classpath (a template config file is provided with
+the source code in the src/main/resources directory)
 
 The application takes some command line parameters. Pass the -h argument to see all possible command line options, e.g.:
 
   java -cp target/neo4j-webgraph-1.8.3.0-jar-with-dependencies.jar org.neo4japps.webgraph.importer.Main -h
 
-Note that, during the import process, you can annotate your Neo4j graph nodes with additional properties by providing custom event handlers that get invoked when a node gets created.
+Note that, during the import process, you can annotate your Neo4j graph nodes with additional properties by providing custom event handlers
+that get invoked when a node gets created.
 
-Sample Twitter and Facebook event handlers are provided with the source code. They determine how often a page has been "liked" (Facebook) or twitted about using these services' remote  APIs. See the source code for details.
+Sample Twitter and Facebook event handlers are provided with the source code. They determine how often a page has been "liked" (Facebook) 
+or twitted about using these services' remote  APIs. See the source code for details.
 
 # Project set-up and build
 
-1. Download and install the Java JDK 1.7 or newer
-2. Download and install Maven 3.1 or newer
+1. Download and install the Java JDK 1.8 or newer
+2. Download and install Maven 3 or newer
 3. Configure the import options in src/main/resources/config.properties
 4. Build the project using build.[cmd|sh]
 
