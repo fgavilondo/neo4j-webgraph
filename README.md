@@ -18,7 +18,7 @@ or twitted about using these services' remote  APIs. See the source code for det
 
 # Project set-up and build
 
-1. Download and install the Java JDK 1.8 or newer
+1. Download and install the Java JDK 11 or newer
 2. Download and install Maven 3 or newer
 3. Configure the import options in src/main/resources/config.properties
 4. Build the project using build.[cmd|sh]

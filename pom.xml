@@ -13,6 +13,7 @@
         <maven.compiler.release>11</maven.compiler.release>
 
         <!-- runtime libs -->
+        <!-- https://repo.maven.apache.org/maven2/org/neo4j/neo4j/ -->
         <neo4j.version>1.8.3</neo4j.version>
         <crawler4j.version>4.1</crawler4j.version>
         <!-- https://repo.maven.apache.org/maven2/org/apache/httpcomponents/httpcore/ -->
