@@ -17,3 +17,6 @@
 /.settings
 /.classpath
 /.project
+
+#Ignore IntelliJ IDE files
+.idea
