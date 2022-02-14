@@ -1,6 +1,8 @@
 package org.neo4japps.webgraph.importer;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -15,7 +17,7 @@ public abstract class AbstractObservableGraphImporter extends ConcurrentObservab
     protected static final String PAGE_INDEX_NAME = "pages";
     protected static final String CATEGORY_INDEX_NAME = "categories";
 
-    protected final Logger logger = Logger.getLogger(this.getClass());
+    protected final Logger logger = LogManager.getLogger(this.getClass());
 
     protected final String rootUrl;
     protected final int reportFrequency;

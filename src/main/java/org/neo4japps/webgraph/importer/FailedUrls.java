@@ -1,7 +1,7 @@
 package org.neo4japps.webgraph.importer;
 
 import edu.uci.ics.crawler4j.url.WebURL;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import java.io.FileWriter;
 import java.io.IOException;

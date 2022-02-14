@@ -1,6 +1,7 @@
 package org.neo4japps.webgraph.importer;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.neo4j.graphdb.Node;
 import org.neo4japps.webgraph.util.ListChunker;
 
@@ -18,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class GraphObserver {
 
-    protected final Logger logger = Logger.getLogger(this.getClass());
+    protected final Logger logger = LogManager.getLogger(this.getClass());
 
     private int reportFrequency = 100;
 

@@ -15,7 +15,8 @@ import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -38,7 +39,7 @@ public class SimpleHttpClient {
      * @param maxCacheEntries the maximum number of cache entries the cache will retain. Set to 0 for no caching.
      */
     public SimpleHttpClient(Object parent, int maxCacheEntries) {
-        logger = Logger.getLogger(this.getClass().getName() + "-" + instanceCounter.incrementAndGet() + " ("
+        logger = LogManager.getLogger(this.getClass().getName() + "-" + instanceCounter.incrementAndGet() + " ("
                 + parent.getClass().getSimpleName() + ")");
 
         isShutdown = new AtomicBoolean();

@@ -5,7 +5,8 @@ import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
@@ -20,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class App {
     private final Set<GraphObserver> graphObservers = Collections.synchronizedSet(new HashSet<GraphObserver>());
 
-    final Logger logger = Logger.getLogger(this.getClass());
+    final Logger logger = LogManager.getLogger(this.getClass());
 
     private final String[] args;
     private final boolean silent;

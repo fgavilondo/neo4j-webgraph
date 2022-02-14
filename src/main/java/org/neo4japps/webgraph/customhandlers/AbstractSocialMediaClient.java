@@ -1,13 +1,14 @@
 package org.neo4japps.webgraph.customhandlers;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.neo4japps.webgraph.util.SimpleHttpClient;
 
 /**
  * This base class is thread-safe.
  */
 public abstract class AbstractSocialMediaClient implements SocialMediaClient {
-    protected final Logger logger = Logger.getLogger(this.getClass());
+    protected final Logger logger = LogManager.getLogger(this.getClass());
 
     protected final SimpleHttpClient httpClient;
 
@@ -16,7 +17,7 @@ public abstract class AbstractSocialMediaClient implements SocialMediaClient {
     private volatile int politenessDelay = 0;
     private volatile long lastFetchTime = 0;
 
-    public AbstractSocialMediaClient(SimpleHttpClient httpClient) {
+    protected AbstractSocialMediaClient(SimpleHttpClient httpClient) {
         this.httpClient = httpClient;
     }
 

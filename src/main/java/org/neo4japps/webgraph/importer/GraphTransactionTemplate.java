@@ -1,6 +1,7 @@
 package org.neo4japps.webgraph.importer;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.kernel.DeadlockDetectedException;
 
@@ -17,7 +18,7 @@ public class GraphTransactionTemplate {
     private static final int DEFAULT_SLEEP_MILLIS = 1000;
     private static final int DEFAULT_MAX_RETRIES = 10;
 
-    private final Logger logger = Logger.getLogger(this.getClass());
+    private final Logger logger = LogManager.getLogger(this.getClass());
 
     private final AtomicInteger retriedTransactions = new AtomicInteger();
     private final AtomicInteger failedTransactions = new AtomicInteger();
